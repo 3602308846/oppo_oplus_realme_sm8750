@@ -356,7 +356,7 @@ jobs:
       - name: 应用 Droidspaces GKI kABI 补丁
         run: |
           cd kernel_workspace/common
-          wget -O fix_sysvipc.patch https://github.com/ravindu644/Droidspaces-OSS/raw/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_1_2_3.patch
+          wget -O fix_sysvipc.patch https://github.com/ravindu644/Droidspaces-OSS/blob/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
           patch -p1 < fix_sysvipc.patch
     
       - name: 应用lz4 1.10.0 & zstd 1.5.7补丁
