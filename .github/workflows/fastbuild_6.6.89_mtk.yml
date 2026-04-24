@@ -355,7 +355,7 @@ jobs:
       - name: 应用 Droidspaces kABI 补丁 (6.6 内核必需)
         run: |
           cd kernel_workspace/common
-          wget -O fix_kabi.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kABI_6_7_8.patch
+          wget -O fix_kabi.patch https://github.com/ravindu644/Droidspaces-OSS/raw/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
              patch -p1 < fix_kabi.patch
             cd ../
             # 修复 [✗] PID namespace 和 [✗] IPC namespace
