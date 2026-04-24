@@ -352,17 +352,11 @@ jobs:
             cd ./KernelSU
             patch -p1 < 10_enable_susfs_for_ksu.patch || true
           fi
-      - name: 注入DroidSpaces内核配置
+      - name: 应用 Droidspaces kABI 补丁 (6.6 内核必需)
         run: |
-            cd kernel_workspace/common
-            wget https://raw.githubusercontent.com/Goldzxcbug/Kernel_patch/refs/heads/main/Droidspaces/01.6.1+_disable_crc_checks_for_lkms.patch
-            wget https://raw.githubusercontent.com/Goldzxcbug/Kernel_patch/refs/heads/main/Droidspaces/02.fix_restore cgroup file prefix handling .patch
-            wget https://raw.githubusercontent.com/Goldzxcbug/Kernel_patch/refs/heads/main/Droidspaces/03.5.15+_use_android_abi_padding_for_posix_mqueue.patch
-            wget https://raw.githubusercontent.com/Goldzxcbug/Kernel_patch/refs/heads/main/Droidspaces/04.use_android_abi_padding_for_sysvipc_task_struct.patch
-            patch -p1 -N -F 3 < '01.6.1+_disable_crc_checks_for_lkms.patch'
-            patch -p1 -N -F 3 < '02.fix_restore cgroup file prefix handling .patch'
-            patch -p1 -N -F 3 < '03.5.15+_use_android_abi_padding_for_posix_mqueue.patch'
-            patch -p1 -N -F 3 < '04.use_android_abi_padding_for_sysvipc_task_struct.patch'
+          cd kernel_workspace/common
+          wget -O fix_kabi.patch https://raw.githubusercontent.com/ravindu644/Droidspaces-OSS/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kABI_6_7_8.patch
+             patch -p1 < fix_kabi.patch
             cd ../
             # 修复 [✗] PID namespace 和 [✗] IPC namespace
               echo "CONFIG_SYSCTL=y" >> ./common/arch/arm64/configs/gki_defconfig
@@ -383,7 +377,12 @@ jobs:
              echo "CONFIG_CGROUP_DEVICE=y" >> ./common/arch/arm64/configs/gki_defconfig
              echo "CONFIG_CGROUP_PIDS=y" >> ./common/arch/arm64/configs/gki_defconfig
              echo "CONFIG_MEMCG=y" >> ./common/arch/arm64/configs/gki_defconfig
-      
+             
+      - name: 移除 Midas 模块编译
+        run: |
+          cd kernel_workspace/common
+          find . -name "Kconfig" -o -name "Makefile" | xargs grep -l "oplus_bsp_midas" 2>/dev/null
+    # 临时重命名或注释掉相关编译规则
     
       - name: 应用lz4 1.10.0 & zstd 1.5.7补丁
         if: inputs.lz4_enable
