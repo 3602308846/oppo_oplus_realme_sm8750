@@ -376,14 +376,27 @@ jobs:
              echo "CONFIG_CGROUPS=y" >> ./common/arch/arm64/configs/gki_defconfig
              echo "CONFIG_CGROUP_DEVICE=y" >> ./common/arch/arm64/configs/gki_defconfig
              echo "CONFIG_CGROUP_PIDS=y" >> ./common/arch/arm64/configs/gki_defconfig
-             echo "CONFIG_MEMCG=y" >> ./common/arch/arm64/configs/gki_defconfig
-             
-      - name: 移除 Midas 模块编译
+             echo "CONFIG_MEMCG=y" >> ./common/arch/arm64/configs/gki_defconfig  
+                   
+      - name: 禁用 Midas 模块修复容器崩溃
         run: |
-          cd kernel_workspace/common
-          find . -name "Kconfig" -o -name "Makefile" | xargs grep -l "oplus_bsp_midas" 2>/dev/null
-    # 临时重命名或注释掉相关编译规则
-    
+         cd kernel_workspace/common
+         
+         echo "" >> ./arch/arm64/configs/gki_defconfig
+         echo "# Disable Midas to fix PID namespace NULL pointer crash" >> ./arch/arm64/configs/gki_defconfig
+         echo "CONFIG_OPLUS_FEATURE_MIDAS_GKI=n" >> ./arch/arm64/configs/gki_defconfig
+         echo "CONFIG_OPLUS_FEATURE_MIDAS=n" >> ./arch/arm64/configs/gki_defconfig
+         echo "CONFIG_OPLUS_FEATURE_TASK_CPUSTATS=n" >> ./arch/arm64/configs/gki_defconfig
+         if [ -d "drivers/oplus/midas" ]; then
+         echo "Found Midas directory, disabling..."
+           if [ -f "drivers/oplus/Makefile" ]; then
+          sed -i '/midas/s/^/# DISABLED: /' drivers/oplus/Makefile
+         fi
+         fi
+         echo "=== Midas config status ==="
+         grep -i "midas" ./arch/arm64/configs/gki_defconfig || echo "No midas config found"
+         echo "==========================="
+
       - name: 应用lz4 1.10.0 & zstd 1.5.7补丁
         if: inputs.lz4_enable
         run: |
