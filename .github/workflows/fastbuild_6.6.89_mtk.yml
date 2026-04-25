@@ -357,46 +357,32 @@ jobs:
           cd kernel_workspace/common
           wget -O fix_kabi.patch https://github.com/ravindu644/Droidspaces-OSS/raw/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
              patch -p1 < fix_kabi.patch
+             wget -O xiufu.patch https://github.com/Goldzxcbug/Droidspaces_Kernel_patch/blob/main/OKI/6.12/pid_oplus_bsp_midas.patch
+             patch -p1 < xiufu.patch
             cd ../
-            # 修复 [✗] PID namespace 和 [✗] IPC namespace
-              echo "CONFIG_SYSCTL=y" >> ./common/arch/arm64/configs/gki_defconfig
-              echo "CONFIG_SYSVIPC=y" >> ./common/arch/arm64/configs/gki_defconfig
-              echo "CONFIG_POSIX_MQUEUE=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-              echo "CONFIG_NAMESPACES=y" >> ./common/arch/arm64/configs/gki_defconfig
-              echo "CONFIG_PID_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
-              echo "CONFIG_IPC_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
-              echo "CONFIG_UTS_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
-              echo "CONFIG_USER_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
-            # 修复 [✗] devtmpfs support
-              echo "CONFIG_DEVTMPFS=y" >> ./common/arch/arm64/configs/gki_defconfig
-              echo "CONFIG_DEVTMPFS_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
-
-            # 修复 cgroup devices support
-             echo "CONFIG_CGROUPS=y" >> ./common/arch/arm64/configs/gki_defconfig
-             echo "CONFIG_CGROUP_DEVICE=y" >> ./common/arch/arm64/configs/gki_defconfig
-             echo "CONFIG_CGROUP_PIDS=y" >> ./common/arch/arm64/configs/gki_defconfig
-             echo "CONFIG_MEMCG=y" >> ./common/arch/arm64/configs/gki_defconfig  
-                   
-      - name: 禁用 Midas 模块修复容器崩溃
-        run: |
-         cd kernel_workspace/common
-         
-         echo "" >> ./arch/arm64/configs/gki_defconfig
-         echo "# Disable Midas to fix PID namespace NULL pointer crash" >> ./arch/arm64/configs/gki_defconfig
-         echo "CONFIG_OPLUS_FEATURE_MIDAS_GKI=n" >> ./arch/arm64/configs/gki_defconfig
-         echo "CONFIG_OPLUS_FEATURE_MIDAS=n" >> ./arch/arm64/configs/gki_defconfig
-         echo "CONFIG_OPLUS_FEATURE_TASK_CPUSTATS=n" >> ./arch/arm64/configs/gki_defconfig
-         if [ -d "drivers/oplus/midas" ]; then
-         echo "Found Midas directory, disabling..."
-           if [ -f "drivers/oplus/Makefile" ]; then
-          sed -i '/midas/s/^/# DISABLED: /' drivers/oplus/Makefile
-         fi
-         fi
-         echo "=== Midas config status ==="
-         grep -i "midas" ./arch/arm64/configs/gki_defconfig || echo "No midas config found"
-         echo "==========================="
-
+            echo "CONFIG_SYSCTL=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_SYSVIPC=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_POSIX_MQUEUE=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_NAMESPACES=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_PID_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_IPC_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_UTS_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_USER_NS=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_DEVTMPFS=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_DEVTMPFS_MOUNT=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_CGROUPS=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_CGROUP_DEVICE=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_CGROUP_PIDS=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_MEMCG=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_NETFILTER_XT_TARGET_REJECT=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_NETFILTER_XT_TARGET_LOG=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_NETFILTER_XT_MATCH_RECENT=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_IP_SET=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_IP_SET_HASH_IP=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_IP_SET_HASH_NET=y" >> ./common/arch/arm64/configs/gki_defconfig
+            echo "CONFIG_NETFILTER_XT_SET=y" >> ./common/arch/arm64/configs/gki_defconfig
+     
       - name: 应用lz4 1.10.0 & zstd 1.5.7补丁
         if: inputs.lz4_enable
         run: |
