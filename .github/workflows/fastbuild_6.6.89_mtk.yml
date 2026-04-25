@@ -357,7 +357,7 @@ jobs:
           cd kernel_workspace/common
           wget -O fix_kabi.patch https://github.com/ravindu644/Droidspaces-OSS/raw/main/Documentation/resources/kernel-patches/GKI/below-kernel-6.12/001.GKI-below-6.12-fix_sysvipc_kabi_6_7_8.patch
              patch -p1 < fix_kabi.patch
-             wget -O xiufu.patch https://github.com/Goldzxcbug/Droidspaces_Kernel_patch/blob/main/OKI/6.12/pid_oplus_bsp_midas.patch
+             wget -O xiufu.patch https://raw.githubusercontent.com/Goldzxcbug/Droidspaces_Kernel_patch/main/OKI/6.12/pid_oplus_bsp_midas.patch
              patch -p1 < xiufu.patch
             cd ../
             echo "CONFIG_SYSCTL=y" >> ./common/arch/arm64/configs/gki_defconfig
